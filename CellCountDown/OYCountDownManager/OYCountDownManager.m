@@ -34,13 +34,12 @@
 
 @implementation OYCountDownManager
 
+static OYCountDownManager *manager_ = nil;
 + (instancetype)manager {
-    static OYCountDownManager *manager = nil;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        manager = [[OYCountDownManager alloc]init];
-    });
-    return manager;
+    if (!manager_) {
+        manager_ = [[OYCountDownManager alloc]init];
+    }
+    return manager_;
 }
 
 - (instancetype)init {
@@ -66,6 +65,7 @@
 - (void)invalidate {
     [self.timer invalidate];
     self.timer = nil;
+    manager_ = nil;
 }
 
 - (void)timerAction {
@@ -144,6 +144,10 @@
         _timeIntervalDict = [NSMutableDictionary dictionary];
     }
     return _timeIntervalDict;
+}
+
+-(void)dealloc{
+    NSLog(@"OYCountDownManager dealloc ===");
 }
 
 NSString *const OYCountDownNotification = @"OYCountDownNotification";
